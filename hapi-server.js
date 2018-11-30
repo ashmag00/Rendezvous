@@ -33,13 +33,14 @@ async function init() {
         }
     });
     server.route([
-        {
+        //TODO: Implement below
+        /*{
             method: "GET",
             path: "/{param*}",
             config: {
                 description: "Production Application.",
             }
-        },
+        },*/
         {
             method: "GET",
             path: "/api/{memberID}",
@@ -83,7 +84,7 @@ async function init() {
                 description: "Create new team",
                 validate: {
                     payload: {
-                        teamName: Joi.string.required().description("Name of team.")
+                        teamName: Joi.string().required().description("Name of team.")
                     }
                 }
             }
@@ -185,7 +186,7 @@ async function init() {
                         teamID: Joi.number().integer().description("Unique teamID for team.")
                     },
                     payload: {
-                        loc: Joi.string().required(),
+                        loc: Joi.string(),
                         startTime: Joi.date(),
                         endTime: Joi.date(),
                         duration: Joi.number()
