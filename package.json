@@ -1,0 +1,28 @@
+{
+  "name": "rendezvous",
+  "version": "1.0.0",
+  "description": "Rendezvous term project for COS243",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashmag00/rendezvous.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashmag00/rendezvous/issues"
+  },
+  "homepage": "https://github.com/ashmag00/rendezvous#readme",
+  "dependencies": {
+    "boom": "^7.3.0",
+    "hapi": "^17.8.1",
+    "joi": "^14.3.0",
+    "knex": "^0.15.2",
+    "objection": "^1.4.0",
+    "vue": "^2.5.17"
+  }
+}
