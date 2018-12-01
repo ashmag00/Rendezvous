@@ -23,6 +23,14 @@ const server = Hapi.server({
     }*/
 });
 
+function memberIDValidate() {
+    return Joi.number().integer().description("Unique member ID for member.");
+}
+
+function teamIDValidate() {
+    return Joi.string().description("Unique Team ID");
+}
+
 
 async function init() {
     await server.register([require('vision'), require('inert'), require('lout'), require("blipp")]);
@@ -48,7 +56,7 @@ async function init() {
                 description: "Get and display activites",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("Unique member ID for member.")//TODO: Can we make this a single time?
+                        memberID: memberIDValidate()
                     }
                 }
             }
@@ -60,7 +68,7 @@ async function init() {
                 description: "Retrieve all teams member is enrolled in.",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("unique memberID for member.")
+                        memberID: memberIDValidate()
                     }
                 }
             }
@@ -72,7 +80,7 @@ async function init() {
                 description: "Retrieve all commitments for a member.",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("Unique memberID for member.")
+                        memberID: memberIDValidate()
                     }
                 }
             }
@@ -90,27 +98,29 @@ async function init() {
             }
         },
         {
-            method: "PATCH",//TODO:Is this correct?
+            method: "POST",
             path: "/api/teams/{teamID}/{memberID}",
             config: {
                 description: "Add a member to a team.",
                 validate: {
                     params: {
-                        teamID: Joi.number().required().description("Unique identifier for a team."),
-                        memberID: Joi.number().required().description("Unique identifier for a member.")
+                        teamID: teamIDValidate(),
+                        memberID: memberIDValidate()
                     }
                 }
             }
         },
         {
             method: "DELETE",
-            path: "/api/teams/{teamID}/{memberID}",//FIXME: make member a payload object
+            path: "/api/teams/{teamID}/",
             config: {
                 description: "Remove a member from a team.",
                 validate: {
                     params: {
-                        teamID: Joi.number().required().description("Unique identifier for a team."),
-                        memberID: Joi.number().required().description("Unique identifier for a member.")
+                        teamID: teamIDValidate(),
+                    },
+                    payload: {
+                        memberID: memberIDValidate()
                     }
                 }
             }
@@ -122,7 +132,7 @@ async function init() {
                 description: "Update member core hours.",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("Unique memberID for member.")
+                        memberID: memberIDValidate()
                     },
                     payload: {
                         coreHours: Joi.date().required()
@@ -137,7 +147,7 @@ async function init() {
                 description: "Create new commitment for member.",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("Unique memberID for member.")
+                        memberID: memberIDValidate()
                     },
                     payload: {
                         startTime: Joi.date().required(),
@@ -154,7 +164,7 @@ async function init() {
                 description: "Update commitment for member.",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("Unique memberID for member.")
+                        memberID: memberIDValidate()
                     },
                     payload: {
                         startTime: Joi.date(),
@@ -171,7 +181,7 @@ async function init() {
                 description: "Delete commitment for member.",
                 validate: {
                     params: {
-                        memberID: Joi.number().integer().description("Unique memberID for member.")
+                        memberID: memberIDValidate()
                     }
                 }
             }
@@ -183,7 +193,7 @@ async function init() {
                 description: "Post a new activity.",
                 validate: {
                     params: {
-                        teamID: Joi.number().integer().description("Unique teamID for team.")
+                        teamID: teamIDValidate()
                     },
                     payload: {
                         loc: Joi.string(),
@@ -201,11 +211,11 @@ async function init() {
                 description: "Voting/Confirming an activity",
                 validate: {
                     params: {
-                        teamID: Joi.number().integer().description("Unique teamID for team."),
+                        teamID: teamIDValidate(),
                         activityID: Joi.number().integer().description("Unique activityID for activity.")
                     },
                     payload: {
-                        memberID: Joi.number().required().description("Unique memberID"),
+                        memberID: memberIDValidate(),
                         vote: Joi.string(),
                         conf: Joi.boolean()
                     }
