@@ -13,7 +13,7 @@ const knex = require("knex")({
 const Joi = require("joi");
 const Hapi = require('hapi');
 
-const server = Hapi.server({ 
+const server = Hapi.server({
     host: "localhost",
     port: 3000,
     /*routes: {
@@ -59,6 +59,9 @@ async function init() {
                         memberID: memberIDValidate()
                     }
                 }
+            },
+            handler: async (request, h) =>{
+
             }
         },
         {
@@ -71,6 +74,8 @@ async function init() {
                         memberID: memberIDValidate()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -83,6 +88,8 @@ async function init() {
                         memberID: memberIDValidate()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -95,6 +102,8 @@ async function init() {
                         teamName: Joi.string().required().description("Name of team.")
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -108,6 +117,8 @@ async function init() {
                         memberID: memberIDValidate()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -123,6 +134,8 @@ async function init() {
                         memberID: memberIDValidate()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -138,6 +151,8 @@ async function init() {
                         coreHours: Joi.date().required()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -155,6 +170,8 @@ async function init() {
                         loc: Joi.string()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -172,6 +189,8 @@ async function init() {
                         loc: Joi.string()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -184,6 +203,8 @@ async function init() {
                         memberID: memberIDValidate()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -202,6 +223,8 @@ async function init() {
                         duration: Joi.number()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         },
         {
@@ -220,6 +243,8 @@ async function init() {
                         conf: Joi.boolean()
                     }
                 }
+            },
+            handler: async (request, h) =>{
             }
         }
     ]);
@@ -228,9 +253,9 @@ async function init() {
     server.logger().info(`Server running at ${server.info.uri}`);
 }
 
-process.on("unhandledRejection", err => {
-    server.logger().error(err);
-    process.exit(1);
-});
+// process.on("unhandledRejection", err => {
+//     server.logger().error(err);
+//     process.exit(1);
+// });
 
 init();
