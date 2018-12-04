@@ -10,17 +10,28 @@ const knex = require("knex")({
     }
 });
 
+const objection = require('objection');
+const Model = objection.Model;
+Model.knex(knex);
+
 const Joi = require("joi");
 const Hapi = require('hapi');
+
+class Members extends Model {
+    static get tableName() {
+        return "members";
+    }
+}
 
 const server = Hapi.server({
     host: "localhost",
     port: 3000,
-    /*routes: {
+    routes: {
         files: {
-            relativeTo: Path.join(_dirname, "dist")
+            relativeTo: Path.join(__dirname, "dist")
         }
-    }*/
+    }
+    
 });
 
 function memberIDValidate() {
@@ -41,17 +52,51 @@ async function init() {
         }
     });
     server.route([
-        //TODO: Implement below
-        /*{
+        {
             method: "GET",
             path: "/{param*}",
             config: {
                 description: "Production Application.",
+            },
+            handler: {
+                directory: {
+                    path: ".",
+                    redirectToSlash: true,
+                    index: true
+                }
             }
-        },*/
+        },
+        {
+            //Maybe?
+            method: "POST",
+            path:"/api/",
+            config: {
+                description: "Post a new login session",
+                validate: {
+                    payload: {
+                        email: Joi.string().email().required(),
+                        password: Joi.string().required()
+                    }
+                }
+            },
+            handler: async (request, h) => {
+                query = await Members.query().select("membersid").where("email_address", request.payload.email).where("password", request.payload.password);
+                if(query[0]) {
+                    return {
+                        ok: true,
+                        data: query[0]
+                    }
+                }
+                else {
+                    return {
+                        ok: false
+                    };
+                }
+            }
+        },
         {
             method: "GET",
-            path: "/api/{memberID}",
+            path: "/api/{memberID}/activities",
             config: {
                 description: "Get and display activites",
                 validate: {
