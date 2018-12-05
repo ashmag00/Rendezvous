@@ -21,7 +21,7 @@
             >
             </v-text-field>
             <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit"
-                >Sign Up
+                >Login
             </v-btn>
         </v-form>
 
@@ -92,6 +92,7 @@ export default {
                             this.showDialog("Success" );
                             this.$root.currentUser = result.data.data.membersid;
                             //console.log(this.$root.currentUser);
+                            this.$router.push({ name: "activities" });
                         } else {
                             this.showDialog("Sorry", result);
                         }

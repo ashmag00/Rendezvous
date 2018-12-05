@@ -21,6 +21,58 @@ class Members extends Model {
     static get tableName() {
         return "members";
     }
+    static get relationMappings() {
+        return {
+            teams: {
+                relation: Model.ManyToManyRelation,
+                modelClass: Teams,
+                join: {
+                    from: "members.membersid",
+                    through: {
+                        from: "memberteam.membersid",
+                        to: "memberteam.teamsid"
+                    },
+                    to: "teams.teamsid"
+                }
+            }
+        };
+    }
+}
+
+class Teams extends Model {
+    static get tableName() {
+        return "teams";
+    }
+    static get relationMappings() {
+        return {
+            activities: {
+                relation: Model.HasManyRelation,
+                modelClass: Activities,
+                join: {
+                    from: "teams.teamsid",
+                    to: "activities.teamsid"
+                }
+            }
+        };
+    }
+}
+
+class Activities extends Model {
+    static get tableName() {
+        return "activities";
+    }
+    static get relationMappings() {
+        return {
+            team: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Teams,
+                join: {
+                    from: "activities.teamsid",
+                    to: "teams.teamsid"
+                }
+            }
+        };
+    }
 }
 
 const server = Hapi.server({
@@ -67,7 +119,6 @@ async function init() {
             }
         },
         {
-            //Maybe?
             method: "POST",
             path:"/api/",
             config: {
@@ -80,7 +131,10 @@ async function init() {
                 }
             },
             handler: async (request, h) => {
-                query = await Members.query().select("membersid").where("email_address", request.payload.email).where("password", request.payload.password);
+                query = await Members.query()
+                    .select("membersid")
+                    .where("email_address", request.payload.email)
+                    .where("password", request.payload.password);
                 if(query[0]) {
                     return {
                         ok: true,
@@ -106,7 +160,29 @@ async function init() {
                 }
             },
             handler: async (request, h) =>{
-
+                //TODO: Query members teams, then query their teams activities
+                Members.query()
+                    .where("membersid", request.params.memberID)
+                    .first()
+                    .then(member => {
+                        console.log(member);
+                        return member.$relatedQuery("teams")
+                    })
+                    .then(teams => {
+                        activeArray = [];
+                        teams.forEach(team => {
+                            console.log(team);
+                            //FIXME: Query not working
+                            team.$relatedQuery("activities")
+                                .then(activities => {
+                                    console.log(activities);
+                                    activeArray.push(activities);
+                                });
+                        });
+                        console.log(activeArray);
+                        return activeArray;
+                    })
+                    .catch(error => console.log(error.message));
             }
         },
         {
