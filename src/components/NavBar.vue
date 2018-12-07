@@ -12,6 +12,8 @@
 
         <v-btn flat v-bind:to="{ name: 'login' }">Login</v-btn>
         <v-btn flat v-bind:to="{ name: 'getcommitments' }">Commitment</v-btn>
+        <v-btn flat v-bind:to="{ name: 'getteams' }">Team</v-btn>
+
 
     </v-toolbar>
 </template>

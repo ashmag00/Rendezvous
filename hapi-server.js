@@ -182,7 +182,7 @@ async function init() {
             },
             handler: async (request, h) =>{
                 //TODO: Query members teams, then query their teams activities
-                let member = await Members.query()
+                 let member = await Members.query()
                     .where("membersid", request.params.memberID)
                     .first()
                     .eager("teams.activities.timeslots")
@@ -206,6 +206,17 @@ async function init() {
                 }
             },
             handler: async (request, h) =>{
+                let member = await Members.query()
+                    .where("membersid", request.params.memberID)
+                    .first()
+                    .eager("teams")
+                    .catch(error => console.log(error.message));
+                let teamnames = [];
+                member.teams.forEach(team => {
+                    console.log(team.teamname);
+                    teamnames = teamnames.concat(team.teamname);
+                });
+                return teamnames;
             }
         },
         {
