@@ -174,7 +174,6 @@ async function init() {
                 }
             },
             handler: async (request, h) =>{
-                //TODO: Query members teams, then query their teams activities
                 let member = await Members.query()
                     .where("membersid", request.params.memberID)
                     .first()
@@ -185,6 +184,43 @@ async function init() {
                     activities = activities.concat(team.activities);
                 });
                 return activities;
+            }
+        },
+        {
+            method: "POST",
+            path: "/api/{teamID}/activities",
+            config: {
+                description: "Post a new activity.",
+                validate: {
+                    params: {
+                        teamID: teamIDValidate()
+                    },
+                    payload: {
+                        activityName: Joi.string().required(),
+                        loc: Joi.string().required(),
+                        startTime: Joi.date().required(),
+                        endTime: Joi.date().required(),
+                    }
+                }
+            },
+            handler: async (request, h) =>{
+                let current = await Activities.query().count('activityid');
+                let active = await Activities.query().returning('activityid').insert({
+                    activityid: current[0].count + 1,
+                    teamsid: request.params.teamID,
+                    location: request.payload.loc,
+                    activityname: request.payload.activityName
+                });
+                current = await TimeSlots.query().count('timeslotid');
+                await TimeSlots.query().returning('timeslotid').insert({
+                    timeslotid: current[0].count + 1,
+                    activityid: active.activityid,
+                    starttime: request.payload.startTime,
+                    endtime: request.payload.endTime
+                });
+                return {
+                    ok: true
+                }
             }
         },
         {
@@ -324,26 +360,6 @@ async function init() {
                 validate: {
                     params: {
                         memberID: memberIDValidate()
-                    }
-                }
-            },
-            handler: async (request, h) =>{
-            }
-        },
-        {
-            method: "POST",
-            path: "/api/{teamID}/activities",
-            config: {
-                description: "Post a new activity.",
-                validate: {
-                    params: {
-                        teamID: teamIDValidate()
-                    },
-                    payload: {
-                        loc: Joi.string(),
-                        startTime: Joi.date(),
-                        endTime: Joi.date(),
-                        duration: Joi.number()
                     }
                 }
             },

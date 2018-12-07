@@ -2,6 +2,7 @@
     <div>
         <h4 class="display-1">Activities</h4>
 
+        <v-btn flat v-bind:to="{name: 'propose'}">Add new Activity</v-btn>
         <v-data-table v-bind:headers="headers" v-bind:items="activities">
             <template slot="items" slot-scope="props">
                 <td>{{ props.item.starttime }}</td>
