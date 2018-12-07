@@ -39,6 +39,13 @@ class Members extends Model {
     }
 }
 
+class Commitments extends Model {
+    static get tableName() {
+        return "commitments";
+    }
+}
+
+
 class Teams extends Model {
     static get tableName() {
         return "teams";
@@ -235,6 +242,17 @@ async function init() {
                 }
             },
             handler: async (request, h) =>{
+                let member = await Members.query()
+                    .where("membersid", request.params.memberID)
+                    .first()
+                    .eager("teams")
+                    .catch(error => console.log(error.message));
+                let teamnames = [];
+                member.teams.forEach(team => {
+                    console.log(team.teamname);
+                    teamnames = teamnames.concat(team.teamname);
+                });
+                return teamnames;
             }
         },
         {
@@ -249,6 +267,10 @@ async function init() {
                 }
             },
             handler: async (request, h) =>{
+                let commitment = await Commitments.query()
+                    .where("membersid", request.params.memberID)
+                    .catch(error => console.log(error.message));
+                return commitment;
             }
         },
         {
