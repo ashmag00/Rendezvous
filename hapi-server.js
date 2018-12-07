@@ -70,8 +70,22 @@ class Activities extends Model {
                     from: "activities.teamsid",
                     to: "teams.teamsid"
                 }
+            },
+            timeslots: {
+                relation: Model.HasManyRelation,
+                modelClass: TimeSlots,
+                join: {
+                    from: "activities.activityid",
+                    to: "timeslot.activityid"
+                }
             }
         };
+    }
+}
+
+class TimeSlots extends Model {
+    static get tableName() {
+        return "timeslot";
     }
 }
 
@@ -161,28 +175,16 @@ async function init() {
             },
             handler: async (request, h) =>{
                 //TODO: Query members teams, then query their teams activities
-                Members.query()
+                let member = await Members.query()
                     .where("membersid", request.params.memberID)
                     .first()
-                    .then(member => {
-                        console.log(member);
-                        return member.$relatedQuery("teams")
-                    })
-                    .then(teams => {
-                        activeArray = [];
-                        teams.forEach(team => {
-                            console.log(team);
-                            //FIXME: Query not working
-                            team.$relatedQuery("activities")
-                                .then(activities => {
-                                    console.log(activities);
-                                    activeArray.push(activities);
-                                });
-                        });
-                        console.log(activeArray);
-                        return activeArray;
-                    })
+                    .eager("teams.activities.timeslots")
                     .catch(error => console.log(error.message));
+                let activities = [];
+                member.teams.forEach(team => {
+                    activities = activities.concat(team.activities);
+                });
+                return activities;
             }
         },
         {
