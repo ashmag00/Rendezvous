@@ -11,6 +11,7 @@
         <v-spacer></v-spacer>
 
         <v-btn flat v-bind:to="{ name: 'login' }">Login</v-btn>
+        <v-btn flat v-bind:to="{ name: 'getcommitments' }">Commitment</v-btn>
 
     </v-toolbar>
 </template>

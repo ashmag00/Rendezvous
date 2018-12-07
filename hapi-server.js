@@ -39,6 +39,13 @@ class Members extends Model {
     }
 }
 
+class Commitments extends Model {
+    static get tableName() {
+        return "commitments";
+    }
+}
+
+
 class Teams extends Model {
     static get tableName() {
         return "teams";
@@ -213,6 +220,10 @@ async function init() {
                 }
             },
             handler: async (request, h) =>{
+                let commitment = await Commitments.query()
+                    .where("membersid", request.params.memberID)
+                    .catch(error => console.log(error.message));
+                return commitment;
             }
         },
         {
